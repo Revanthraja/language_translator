@@ -27,11 +27,15 @@ public class MainActivity extends AppCompatActivity {
     private Translator translatorHindi;
     private Translator translatorBengali;
 
+    private  Translator translatorKannada;
+
     private Boolean booleanGerman = false;
     private Boolean booleanArabic = false;
     private Boolean booleanKorean = false;
     private Boolean booleanHindi=false;
     private Boolean booleanBengali=false;
+
+    private Boolean booleanKannda=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +68,11 @@ public class MainActivity extends AppCompatActivity {
                 .setSourceLanguage(TranslateLanguage.ENGLISH)
                 .setTargetLanguage(TranslateLanguage.BENGALI)
                 .build();
+        TranslatorOptions translatorOptionsKannada = new TranslatorOptions.Builder()
+                .setSourceLanguage(TranslateLanguage.ENGLISH)
+                .setTargetLanguage(TranslateLanguage.KANNADA)
+                .build();
+
 
 
 
@@ -72,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         translatorKorean = Translation.getClient(translatorOptionsKorean);
         translatorHindi = Translation.getClient(translatorOptionsHindi);
         translatorBengali = Translation.getClient(translatorOptionsBengali);
+        translatorKannada=Translation.getClient(translatorOptionsKannada);
 
 
         downloadModel();
@@ -149,6 +159,19 @@ public class MainActivity extends AppCompatActivity {
                         booleanBengali = false;
                     }
                 });
+        translatorKannada.downloadModelIfNeeded(downloadConditions)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        booleanKannda = true;
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        booleanKannda = false;
+                    }
+                });
     }
 
     public void buttonDownloadModel(View view){
@@ -177,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void buttonArabic(View view){
 
-        if (booleanGerman){
+        if (booleanArabic){
             translatorArabic.translate(editText.getText().toString())
                     .addOnSuccessListener(new OnSuccessListener<String>() {
                         @Override
@@ -195,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void buttonKorean(View view){
-        if (booleanGerman){
+        if (booleanKorean){
             translatorKorean.translate(editText.getText().toString())
                     .addOnSuccessListener(new OnSuccessListener<String>() {
                         @Override
@@ -212,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void buttonHindi(View view){
-        if (booleanGerman){
+        if (booleanHindi){
             translatorHindi.translate(editText.getText().toString())
                     .addOnSuccessListener(new OnSuccessListener<String>() {
                         @Override
@@ -229,8 +252,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void buttonBengali(View view){
-        if (booleanGerman){
+        if (booleanBengali){
             translatorBengali.translate(editText.getText().toString())
+                    .addOnSuccessListener(new OnSuccessListener<String>() {
+                        @Override
+                        public void onSuccess(String s) {
+                            textView.setText(s);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            textView.setText(e.toString());
+                        }
+                    });
+        }
+    }
+    public void buttonKannada(View view){
+        if (booleanKannda){
+            translatorKannada.translate(editText.getText().toString())
                     .addOnSuccessListener(new OnSuccessListener<String>() {
                         @Override
                         public void onSuccess(String s) {
